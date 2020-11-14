@@ -1,47 +1,53 @@
-//apply plugin: 'com.google.protobuf'
+apply plugin: 'com.google.protobuf'
+
+dependencies {
+    implementation 'io.grpc:grpc-netty-shaded'
+    compile "io.grpc:grpc-protobuf"
+    compile "io.grpc:grpc-stub"
+
+    compile group: 'com.google.protobuf', name: 'protobuf-java'
+    compile group: 'io.grpc', name: 'grpc-all', version: '1.31.1'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    generatedFilesBaseDir = "$projectDir/src/generated"
+    clean {
+        delete generatedFilesBaseDir
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
 
 buildscript {
     repositories {
         mavenLocal()
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        //和maven中央仓库一样的另一个依赖管理仓库,主要是java
+        jcenter()
     }
+
     dependencies {
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.1'
+        classpath "com.google.protobuf:protobuf-gradle-plugin:${protobufGradlePluginVersion}"
     }
 }
 
-//protobuf {
-//    protoc {
-//        artifact = "com.google.protobuf:protoc:3.5.1"
-//    }
-//    plugins {
-//        grpc {
-//            artifact = 'io.grpc:protoc-gen-grpc-java:1.16.1'
-//        }
-//    }
-//    //配置生成输出目录
-//    generatedFilesBaseDir = "$projectDir/src"
-//    generateProtoTasks {
-//        all()*.plugins {
-//            grpc { outputSubDir = "java" }
-//        }
-//    }
-//}
-//sourceSets {
-//    main {
-//        proto {
-//            // In addition to the default 'src/main/proto'
-//            srcDir 'src/main/protobuf'
-//            srcDir 'src/main/protocolbuffers'
-//            include '**/*.protodevel'
-//        }
-//        java {
-//        }
-//    }
-//    test {
-//        proto {
-//            // In addition to the default 'src/test/proto'
-//            srcDir 'src/test/protocolbuffers'
-//        }
-//    }
-//}
+// Optional
+idea {
+    module {
+        sourceDirs += file("src/generated/main/java")
+        sourceDirs += file("src/generated/main/grpc")
+        generatedSourceDirs += file("src/generated/main/java")
+        generatedSourceDirs += file("src/generated/main/grpc")
+    }
+}

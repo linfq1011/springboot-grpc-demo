@@ -1,3 +1,21 @@
+apply plugin: 'org.springframework.boot'
+
 dependencies {
     compile project(':demo-grpc-lib')
+
+    compile('org.springframework.boot:spring-boot-starter')
+    compile 'net.devh:grpc-client-spring-boot-starter:2.10.1.RELEASE'
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        //和maven中央仓库一样的另一个依赖管理仓库,主要是java
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
