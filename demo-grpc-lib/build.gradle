@@ -1,12 +1,8 @@
 apply plugin: 'com.google.protobuf'
 
 dependencies {
-    implementation 'io.grpc:grpc-netty-shaded'
     compile "io.grpc:grpc-protobuf"
     compile "io.grpc:grpc-stub"
-
-    compile group: 'com.google.protobuf', name: 'protobuf-java'
-    compile group: 'io.grpc', name: 'grpc-all', version: '1.31.1'
 }
 
 protobuf {
@@ -17,11 +13,13 @@ protobuf {
     clean {
         delete generatedFilesBaseDir
     }
+
     plugins {
         grpc {
-            artifact = "io.grpc:protoc-gen-grpc-java"
+            artifact = "io.grpc:protoc-gen-grpc-java:${protobufGenjavaVersion}"
         }
     }
+
     generateProtoTasks {
         all()*.plugins {
             grpc {}
